@@ -141,3 +141,32 @@ def delete_one_resource(resource_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return orders.delete(db=db, resource_id=resource_id)
 
+@app.post("/order_details/", response_model=schemas.OrderDetail, tags=["Order Details"])
+def create_order_detail(order_detail: schemas.OrderDetailCreate, db: Session = Depends(get_db)):
+    return orders.create(db=db, order_detail=order_detail)
+
+@app.get("/order_details/", response_model=list[schemas.OrderDetail], tags=["Order Details"])
+def read_order_details(db: Session = Depends(get_db)):
+    return orders.read_all(db)
+
+@app.get("/order_details/{order_detail_id}", response_model=schemas.OrderDetail, tags=["Order Details"])
+def read_one_order_detail(order_detail_id: int, db: Session = Depends(get_db)):
+    order_detail = orders.read_one(db, order_detail_id=order_detail_id)
+    if order_detail is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return order_detail
+
+@app.put("/order_details/{order_detail_id}", response_model=schemas.OrderDetail, tags=["Order Details"])
+def update_one_order_detail(order_detail_id: int, order_detail: schemas.OrderDetailUpdate, db: Session = Depends(get_db)):
+    order_detail_db = orders.read_one(db, order_detail_id=order_detail_id)
+    if order_detail_db is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return orders.update(db=db, order_detail=order_detail, order_detail_id=order_detail_id)
+
+@app.delete("/order_details/{order_detail_id}", tags=["Order Details"])
+def delete_one_order_detail(order_detail_id: int, db: Session = Depends(get_db)):
+    order_detail = orders.read_one(db, order_detail_id=order_detail_id)
+    if order_detail is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return orders.delete(db=db, order_detail_id=order_detail_id)
+
